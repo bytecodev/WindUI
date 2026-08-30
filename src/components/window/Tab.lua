@@ -464,6 +464,136 @@ function TabModule.New(Config, UIScale)
 		Tab
 	)
 
+	-- Native centered state container for tabs. This is useful for gated/empty
+	-- pages (for example, a Chat tab that should only show a Connect button
+	-- until a session is ready) without scripts manually parenting Instances
+	-- into WindUI internals. The returned object exposes the normal WindUI
+	-- element API: state:Button(), state:Paragraph(), state:Input(), etc.
+	function Tab:EmptyState(StateConfig)
+		StateConfig = StateConfig or {}
+
+		local State = {
+			__type = "EmptyState",
+			Visible = false,
+			Elements = {},
+			UIElements = {},
+			Tab = Tab,
+		}
+
+		local StateFrame = New("Frame", {
+			Name = StateConfig.Name or "EmptyState",
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			Visible = false,
+			ZIndex = StateConfig.ZIndex or 20,
+			Parent = Tab.UIElements.ContainerFrameCanvas,
+		})
+
+		local Content = New("Frame", {
+			Name = "Content",
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.new(1, -(StateConfig.Padding or 40) * 2, 0, 0),
+			AutomaticSize = "Y",
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			ZIndex = (StateConfig.ZIndex or 20) + 1,
+			Parent = StateFrame,
+		}, {
+			New("UISizeConstraint", {
+				MaxSize = Vector2.new(StateConfig.MaxWidth or 320, 1000000),
+			}),
+			New("UIListLayout", {
+				SortOrder = "LayoutOrder",
+				Padding = UDim.new(0, StateConfig.Gap or Tab.Gap),
+				HorizontalAlignment = "Center",
+				VerticalAlignment = "Center",
+			}),
+		})
+
+		State.UIElements.Main = StateFrame
+		State.UIElements.Content = Content
+
+		ElementsModule.Load(
+			State,
+			Content,
+			ElementsModule.Elements,
+			Window,
+			WindUI,
+			nil,
+			ElementsModule,
+			UIScale,
+			Tab
+		)
+
+		local function ApplyVisibility(Visible)
+			Visible = Visible == true
+
+			if Visible and Tab._ActiveEmptyState and Tab._ActiveEmptyState ~= State then
+				Tab._ActiveEmptyState:SetVisible(false)
+			end
+
+			State.Visible = Visible
+			StateFrame.Visible = Visible
+			Tab.UIElements.ContainerFrame.Visible = not Visible
+
+			local ScrollHolder = Tab.UIElements.ContainerFrameCanvas:FindFirstChild("ScrollSliderHolder")
+			if ScrollHolder then
+				ScrollHolder.Visible = not Visible
+			end
+
+			if Visible then
+				Tab._ActiveEmptyState = State
+			elseif Tab._ActiveEmptyState == State then
+				Tab._ActiveEmptyState = nil
+			end
+
+			return State
+		end
+
+		function State:SetVisible(Visible)
+			return ApplyVisibility(Visible)
+		end
+
+		function State:Show()
+			return ApplyVisibility(true)
+		end
+
+		function State:Hide()
+			return ApplyVisibility(false)
+		end
+
+		function State:Destroy()
+			if State._Destroyed then
+				return
+			end
+			State._Destroyed = true
+
+			if Tab._ActiveEmptyState == State then
+				Tab._ActiveEmptyState = nil
+				Tab.UIElements.ContainerFrame.Visible = true
+				local ScrollHolder = Tab.UIElements.ContainerFrameCanvas:FindFirstChild("ScrollSliderHolder")
+				if ScrollHolder then
+					ScrollHolder.Visible = true
+				end
+			end
+
+			for Index = #State.Elements, 1, -1 do
+				local Element = State.Elements[Index]
+				if Element and Element.Destroy then
+					Element:Destroy()
+				end
+			end
+
+			StateFrame:Destroy()
+		end
+
+		ApplyVisibility(StateConfig.Visible == true)
+
+		return State
+	end
+
 	function Tab:LockAll()
 		--print("LockAll called, number of elements: " .. #self.Elements)
 		for _, element in next, Window.AllElements do

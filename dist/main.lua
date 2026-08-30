@@ -36332,6 +36332,133 @@ aq,
 ar
 )
 
+-- Native centered state container for tabs. Returned states expose the normal
+-- WindUI element API (state:Button(), state:Paragraph(), state:Input(), etc.).
+function ar.EmptyState(self,StateConfig)
+StateConfig=StateConfig or{}
+
+local State={
+__type="EmptyState",
+Visible=false,
+Elements={},
+UIElements={},
+Tab=ar,
+}
+
+local StateFrame=al("Frame",{
+Name=StateConfig.Name or"EmptyState",
+Size=UDim2.fromScale(1,1),
+BackgroundTransparency=1,
+BorderSizePixel=0,
+Visible=false,
+ZIndex=StateConfig.ZIndex or 20,
+Parent=ar.UIElements.ContainerFrameCanvas,
+})
+
+local Content=al("Frame",{
+Name="Content",
+AnchorPoint=Vector2.new(0.5,0.5),
+Position=UDim2.fromScale(0.5,0.5),
+Size=UDim2.new(1,-(StateConfig.Padding or 40)*2,0,0),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+BorderSizePixel=0,
+ZIndex=(StateConfig.ZIndex or 20)+1,
+Parent=StateFrame,
+},{
+al("UISizeConstraint",{
+MaxSize=Vector2.new(StateConfig.MaxWidth or 320,1000000),
+}),
+al("UIListLayout",{
+SortOrder="LayoutOrder",
+Padding=UDim.new(0,StateConfig.Gap or ar.Gap),
+HorizontalAlignment="Center",
+VerticalAlignment="Center",
+}),
+})
+
+State.UIElements.Main=StateFrame
+State.UIElements.Content=Content
+
+aA.Load(
+State,
+Content,
+aA.Elements,
+Window,
+WindUI,
+nil,
+aA,
+aq,
+ar
+)
+
+local function ApplyVisibility(Visible)
+Visible=Visible==true
+
+if Visible and ar._ActiveEmptyState and ar._ActiveEmptyState~=State then
+ar._ActiveEmptyState:SetVisible(false)
+end
+
+State.Visible=Visible
+StateFrame.Visible=Visible
+ar.UIElements.ContainerFrame.Visible=not Visible
+
+local ScrollHolder=ar.UIElements.ContainerFrameCanvas:FindFirstChild("ScrollSliderHolder")
+if ScrollHolder then
+ScrollHolder.Visible=not Visible
+end
+
+if Visible then
+ar._ActiveEmptyState=State
+elseif ar._ActiveEmptyState==State then
+ar._ActiveEmptyState=nil
+end
+
+return State
+end
+
+function State.SetVisible(self,Visible)
+return ApplyVisibility(Visible)
+end
+
+function State.Show(self)
+return ApplyVisibility(true)
+end
+
+function State.Hide(self)
+return ApplyVisibility(false)
+end
+
+function State.Destroy(self)
+if State._Destroyed then
+return
+end
+State._Destroyed=true
+
+if ar._ActiveEmptyState==State then
+ar._ActiveEmptyState=nil
+ar.UIElements.ContainerFrame.Visible=true
+local ScrollHolder=ar.UIElements.ContainerFrameCanvas:FindFirstChild("ScrollSliderHolder")
+if ScrollHolder then
+ScrollHolder.Visible=true
+end
+end
+
+for Index=#State.Elements,1,-1 do
+local Element=State.Elements[Index]
+if Element and Element.Destroy then
+Element:Destroy()
+end
+end
+
+StateFrame:Destroy()
+end
+
+ApplyVisibility(StateConfig.Visible==true)
+
+return State
+end
+
 function ar.LockAll(aB)
 
 for b,d in next,Window.AllElements do
