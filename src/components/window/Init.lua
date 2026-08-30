@@ -338,7 +338,7 @@ return function(Config)
 	if Window.User then
 		local function GetUserThumb()
 			local ImageId, _ = Players:GetUserThumbnailAsync(
-				Window.User.Anonymous and 1 or Players.LocalPlayer.UserId,
+				Players.LocalPlayer.UserId,
 				Enum.ThumbnailType.HeadShot,
 				Enum.ThumbnailSize.Size420x420
 			)
