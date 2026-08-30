@@ -37927,7 +37927,7 @@ BackgroundTransparency=1,
 TextTransparency=0.35,
 AutomaticSize="XY",
 Parent=aw.UIElements.Main and aw.UIElements.Main.Main.Topbar.Left.Title,
-TextXAlignment=aw.Topbar.ButtonsType=="Mac"and"Right"or"Left",
+TextXAlignment="Left",
 TextSize=13,
 LayoutOrder=2,
 ThemeTag={
@@ -37950,7 +37950,7 @@ FontFace=Font.new(an.Font,Enum.FontWeight.SemiBold),
 BackgroundTransparency=1,
 AutomaticSize="XY",
 Name="Title",
-TextXAlignment=aw.Topbar.ButtonsType=="Mac"and"Right"or"Left",
+TextXAlignment="Left",
 TextSize=16,
 ThemeTag={
 TextColor3="WindowTopbarTitle",
@@ -38040,14 +38040,14 @@ AutomaticSize="XY",
 BackgroundTransparency=1,
 Name="Title",
 Size=UDim2.new(0,0,1,0),
-LayoutOrder=2,
+LayoutOrder=aw.Topbar.ButtonsType=="Mac"and 1 or 2,
 },{
 ao("UIListLayout",{
 Padding=UDim.new(0,0),
 SortOrder="LayoutOrder",
 FillDirection="Vertical",
 VerticalAlignment="Center",
-HorizontalAlignment=aw.Topbar.ButtonsType=="Mac"and"Right"or"Left",
+HorizontalAlignment="Left",
 }),
 x,
 u,
@@ -38355,6 +38355,7 @@ if aw.Icon then
 local A=ao("Frame",{
 Size=UDim2.new(0,22,0,22),
 BackgroundTransparency=1,
+LayoutOrder=aw.Topbar.ButtonsType=="Mac"and 2 or 1,
 Parent=aw.UIElements.Main.Main.Topbar.Left,
 })
 

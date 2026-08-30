@@ -680,7 +680,7 @@ return function(Config)
 			TextTransparency = 0.35,
 			AutomaticSize = "XY",
 			Parent = Window.UIElements.Main and Window.UIElements.Main.Main.Topbar.Left.Title,
-			TextXAlignment = Window.Topbar.ButtonsType == "Mac" and "Right" or "Left",
+			TextXAlignment = "Left",
 			TextSize = 13,
 			LayoutOrder = 2,
 			ThemeTag = {
@@ -703,7 +703,7 @@ return function(Config)
 		BackgroundTransparency = 1,
 		AutomaticSize = "XY",
 		Name = "Title",
-		TextXAlignment = Window.Topbar.ButtonsType == "Mac" and "Right" or "Left",
+		TextXAlignment = "Left",
 		TextSize = 16,
 		ThemeTag = {
 			TextColor3 = "WindowTopbarTitle",
@@ -793,14 +793,14 @@ return function(Config)
 						BackgroundTransparency = 1,
 						Name = "Title",
 						Size = UDim2.new(0, 0, 1, 0),
-						LayoutOrder = 2,
+						LayoutOrder = Window.Topbar.ButtonsType == "Mac" and 1 or 2,
 					}, {
 						New("UIListLayout", {
 							Padding = UDim.new(0, 0),
 							SortOrder = "LayoutOrder",
 							FillDirection = "Vertical",
 							VerticalAlignment = "Center",
-							HorizontalAlignment = Window.Topbar.ButtonsType == "Mac" and "Right" or "Left",
+							HorizontalAlignment = "Left",
 						}),
 						WindowTitle,
 						WindowAuthor,
@@ -1113,6 +1113,7 @@ return function(Config)
 			local WindowIconContainer = New("Frame", {
 				Size = UDim2.new(0, 22, 0, 22),
 				BackgroundTransparency = 1,
+				LayoutOrder = Window.Topbar.ButtonsType == "Mac" and 2 or 1,
 				Parent = Window.UIElements.Main.Main.Topbar.Left,
 			})
 
