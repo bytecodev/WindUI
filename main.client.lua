@@ -326,12 +326,17 @@ end
 -- */  Elements Section  /* --
 local ElementsSection = Window:Section({
 	Title = "Elements",
+	Icon = "solar:widget-5-bold", -- optional section icon
+	--IconColor = Blue, -- optional custom icon color
+	--IconSize = 18, -- optional icon size, default 18
 })
 local ConfigUsageSection = Window:Section({
 	Title = "Config Usage",
+	Icon = "solar:folder-with-files-bold",
 })
 local OtherSection = Window:Section({
 	Title = "Other",
+	Icon = "solar:menu-dots-bold",
 })
 
 -- */  Overview Tab  /* --

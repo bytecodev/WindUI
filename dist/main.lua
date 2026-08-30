@@ -36654,11 +36654,12 @@ function aa.New(am,an,ao,ap,aq)
 local ar={
 Title=am.Title or"Section",
 Icon=am.Icon,
+IconColor=am.IconColor,
 IconThemed=am.IconThemed,
 Opened=am.Opened or false,
 
 HeaderSize=42,
-IconSize=18,
+IconSize=am.IconSize or 18,
 
 Expandable=false,
 }
@@ -36671,13 +36672,16 @@ ar.Icon,
 0,
 ao,
 "Section",
-true,
+ar.IconColor and false or true,
 ar.IconThemed,
 "TabSectionIcon"
 )
 
 as.Size=UDim2.new(0,ar.IconSize,0,ar.IconSize)
 as.ImageLabel.ImageTransparency=.25
+if ar.IconColor then
+as.ImageLabel.ImageColor3=ar.IconColor
+end
 end
 
 local at=ai("Frame",{

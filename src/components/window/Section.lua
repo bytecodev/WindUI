@@ -11,11 +11,12 @@ function Section.New(SectionConfig, Parent, Folder, UIScale, Window)
     local SectionModule = {
         Title = SectionConfig.Title or "Section",
         Icon = SectionConfig.Icon,
+        IconColor = SectionConfig.IconColor,
         IconThemed = SectionConfig.IconThemed,
         Opened = SectionConfig.Opened or false,
         
         HeaderSize = 42,
-        IconSize = 18,
+        IconSize = SectionConfig.IconSize or 18,
         
         Expandable = false,
     }
@@ -28,13 +29,16 @@ function Section.New(SectionConfig, Parent, Folder, UIScale, Window)
             0,
             Folder,
             "Section",
-            true,
+            SectionModule.IconColor and false or true,
             SectionModule.IconThemed,
             "TabSectionIcon"
         )
         
         IconFrame.Size = UDim2.new(0,SectionModule.IconSize,0,SectionModule.IconSize)
         IconFrame.ImageLabel.ImageTransparency = .25
+        if SectionModule.IconColor then
+            IconFrame.ImageLabel.ImageColor3 = SectionModule.IconColor
+        end
     end
     
     local ChevronIconFrame = New("Frame", {
