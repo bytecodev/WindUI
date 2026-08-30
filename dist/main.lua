@@ -37911,7 +37911,7 @@ BackgroundTransparency=1,
 TextTransparency=0.35,
 AutomaticSize="XY",
 Parent=aw.UIElements.Main and aw.UIElements.Main.Main.Topbar.Left.Title,
-TextXAlignment="Left",
+TextXAlignment=aw.Topbar.ButtonsType=="Mac"and"Right"or"Left",
 TextSize=13,
 LayoutOrder=2,
 ThemeTag={
@@ -37934,7 +37934,7 @@ FontFace=Font.new(an.Font,Enum.FontWeight.SemiBold),
 BackgroundTransparency=1,
 AutomaticSize="XY",
 Name="Title",
-TextXAlignment="Left",
+TextXAlignment=aw.Topbar.ButtonsType=="Mac"and"Right"or"Left",
 TextSize=16,
 ThemeTag={
 TextColor3="WindowTopbarTitle",
@@ -38009,6 +38009,8 @@ ao("Frame",{
 AutomaticSize="X",
 Size=UDim2.new(0,0,1,0),
 BackgroundTransparency=1,
+Position=UDim2.new(aw.Topbar.ButtonsType=="Mac"and 1 or 0,0,0,0),
+AnchorPoint=Vector2.new(aw.Topbar.ButtonsType=="Mac"and 1 or 0,0),
 Name="Left",
 },{
 ao("UIListLayout",{
@@ -38029,6 +38031,7 @@ Padding=UDim.new(0,0),
 SortOrder="LayoutOrder",
 FillDirection="Vertical",
 VerticalAlignment="Center",
+HorizontalAlignment=aw.Topbar.ButtonsType=="Mac"and"Right"or"Left",
 }),
 x,
 u,
@@ -38096,38 +38099,28 @@ PaddingBottom=UDim.new(0,aw.UIPadding),
 }),
 })
 
-an.AddSignal(aw.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal"AbsoluteSize",function()
-local z=0
-local A=aw.UIElements.Main.Main.Topbar.Right.UIListLayout.AbsoluteContentSize.X
-/av.WindUI.UIScale
-
-z=aw.UIElements.Main.Main.Topbar.Left.AbsoluteSize.X/av.WindUI.UIScale
-if aw.Topbar.ButtonsType~="Default"then
-z=z+A+aw.UIPadding-4
+local z=function()
+local A=aw.UIElements.Main.Main.Topbar
+local B=av.WindUI.UIScale
+local C=A.Left.AbsoluteSize.X/B
+local F=A.Right.UIListLayout.AbsoluteContentSize.X/B
+local G
+local H
+if aw.Topbar.ButtonsType=="Mac"then
+G=F+aw.UIPadding-4
+H=C
+else
+G=C
+H=F+aw.UIPadding
+end
+local J=aw.UIPadding/B
+A.Center.Position=UDim2.new(0,G+J,0.5,0)
+A.Center.Size=UDim2.new(1,-G-J-H,1,0)
 end
 
-aw.UIElements.Main.Main.Topbar.Center.Position=
-UDim2.new(0,z+(aw.UIPadding/av.WindUI.UIScale),0.5,0)
-aw.UIElements.Main.Main.Topbar.Center.Size=UDim2.new(
-1,
--z
--(aw.UIPadding/av.WindUI.UIScale)
--(aw.Topbar.ButtonsType=="Default"and A+aw.UIPadding or 0),
-1,
-0
-)
-end)
-
-if aw.Topbar.ButtonsType~="Default"then
-an.AddSignal(aw.UIElements.Main.Main.Topbar.Right:GetPropertyChangedSignal"AbsoluteSize",function()
-aw.UIElements.Main.Main.Topbar.Left.Position=UDim2.new(
-0,
-(aw.UIElements.Main.Main.Topbar.Right.AbsoluteSize.X/av.WindUI.UIScale)+aw.UIPadding-4,
-0,
-0
-)
-end)
-end
+an.AddSignal(aw.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal"AbsoluteSize",z)
+an.AddSignal(aw.UIElements.Main.Main.Topbar.Right:GetPropertyChangedSignal"AbsoluteSize",z)
+z()
 
 function aw.CreateTopbarButton(z,A,B,C,F,G,H,J)
 local L=an.Image(

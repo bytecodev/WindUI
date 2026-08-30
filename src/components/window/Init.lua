@@ -680,7 +680,7 @@ return function(Config)
 			TextTransparency = 0.35,
 			AutomaticSize = "XY",
 			Parent = Window.UIElements.Main and Window.UIElements.Main.Main.Topbar.Left.Title,
-			TextXAlignment = "Left",
+			TextXAlignment = Window.Topbar.ButtonsType == "Mac" and "Right" or "Left",
 			TextSize = 13,
 			LayoutOrder = 2,
 			ThemeTag = {
@@ -703,7 +703,7 @@ return function(Config)
 		BackgroundTransparency = 1,
 		AutomaticSize = "XY",
 		Name = "Title",
-		TextXAlignment = "Left",
+		TextXAlignment = Window.Topbar.ButtonsType == "Mac" and "Right" or "Left",
 		TextSize = 16,
 		ThemeTag = {
 			TextColor3 = "WindowTopbarTitle",
@@ -774,10 +774,12 @@ return function(Config)
                     BackgroundTransparency = 0.9,
                     BackgroundColor3 = Color3.fromHex(Config.Theme.Outline),
                 }),]]
-				New("Frame", { -- Topbar Left Side
+				New("Frame", { -- Topbar Left Side / Window config
 					AutomaticSize = "X",
 					Size = UDim2.new(0, 0, 1, 0),
 					BackgroundTransparency = 1,
+					Position = UDim2.new(Window.Topbar.ButtonsType == "Mac" and 1 or 0, 0, 0, 0),
+					AnchorPoint = Vector2.new(Window.Topbar.ButtonsType == "Mac" and 1 or 0, 0),
 					Name = "Left",
 				}, {
 					New("UIListLayout", {
@@ -798,6 +800,7 @@ return function(Config)
 							SortOrder = "LayoutOrder",
 							FillDirection = "Vertical",
 							VerticalAlignment = "Center",
+							HorizontalAlignment = Window.Topbar.ButtonsType == "Mac" and "Right" or "Left",
 						}),
 						WindowTitle,
 						WindowAuthor,
@@ -865,38 +868,33 @@ return function(Config)
 		}),
 	})
 
-	Creator.AddSignal(Window.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal("AbsoluteSize"), function()
-		local LeftWidth = 0
-		local RightWidth = Window.UIElements.Main.Main.Topbar.Right.UIListLayout.AbsoluteContentSize.X
-			/ Config.WindUI.UIScale
+	local function UpdateTopbarLayout()
+		local Topbar = Window.UIElements.Main.Main.Topbar
+		local Scale = Config.WindUI.UIScale
+		local TitleWidth = Topbar.Left.AbsoluteSize.X / Scale
+		local ButtonsWidth = Topbar.Right.UIListLayout.AbsoluteContentSize.X / Scale
+		local LeftWidth
+		local RightWidth
 
-		LeftWidth = Window.UIElements.Main.Main.Topbar.Left.AbsoluteSize.X / Config.WindUI.UIScale
-		if Window.Topbar.ButtonsType ~= "Default" then
-			LeftWidth = LeftWidth + RightWidth + Window.UIPadding - 4
+		if Window.Topbar.ButtonsType == "Mac" then
+			-- Mac layout mirrors the default layout:
+			-- traffic-light buttons on the left, window title/config on the right.
+			LeftWidth = ButtonsWidth + Window.UIPadding - 4
+			RightWidth = TitleWidth
+		else
+			LeftWidth = TitleWidth
+			RightWidth = ButtonsWidth + Window.UIPadding
 		end
 
-		Window.UIElements.Main.Main.Topbar.Center.Position =
-			UDim2.new(0, LeftWidth + (Window.UIPadding / Config.WindUI.UIScale), 0.5, 0)
-		Window.UIElements.Main.Main.Topbar.Center.Size = UDim2.new(
-			1,
-			-LeftWidth
-				- (Window.UIPadding / Config.WindUI.UIScale)
-				- (Window.Topbar.ButtonsType == "Default" and RightWidth + Window.UIPadding or 0),
-			1,
-			0
-		)
-	end)
-
-	if Window.Topbar.ButtonsType ~= "Default" then
-		Creator.AddSignal(Window.UIElements.Main.Main.Topbar.Right:GetPropertyChangedSignal("AbsoluteSize"), function()
-			Window.UIElements.Main.Main.Topbar.Left.Position = UDim2.new(
-				0,
-				(Window.UIElements.Main.Main.Topbar.Right.AbsoluteSize.X / Config.WindUI.UIScale) + Window.UIPadding - 4,
-				0,
-				0
-			)
-		end)
+		local CenterGap = Window.UIPadding / Scale
+		Topbar.Center.Position = UDim2.new(0, LeftWidth + CenterGap, 0.5, 0)
+		Topbar.Center.Size = UDim2.new(1, -LeftWidth - CenterGap - RightWidth, 1, 0)
 	end
+
+	Creator.AddSignal(Window.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal("AbsoluteSize"), UpdateTopbarLayout)
+	Creator.AddSignal(Window.UIElements.Main.Main.Topbar.Right:GetPropertyChangedSignal("AbsoluteSize"), UpdateTopbarLayout)
+
+	UpdateTopbarLayout()
 
 	function Window:CreateTopbarButton(Name, Icon, Callback, LayoutOrder, IconThemed, Color, IconSize)
 		local IconFrame = Creator.Image(
