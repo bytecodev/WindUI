@@ -75,7 +75,7 @@ return function(Config)
 		Destroyed = false,
 		IsFullscreen = false,
 		CanResize = Config.Resizable ~= false,
-		IsOpenButtonEnabled = true,
+		IsOpenButtonEnabled = not (Config.OpenButton == false or (typeof(Config.OpenButton) == "table" and Config.OpenButton.Enabled == false)),
 
 		CurrentConfig = nil,
 		ConfigManager = nil,

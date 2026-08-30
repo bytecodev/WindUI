@@ -214,8 +214,8 @@ function OpenButton.New(Window)
         
         -- wtf lol
         
-        if OpenButtonModule.Enabled == false then
-            Window.IsOpenButtonEnabled = false
+        if OpenButtonModule.Enabled ~= nil then
+            Window.IsOpenButtonEnabled = OpenButtonModule.Enabled ~= false
         end
         
         if OpenButtonModule.OnlyMobile ~= false then
@@ -275,6 +275,13 @@ function OpenButton.New(Window)
         Button.UIStroke.Thickness = OpenButtonModule.StrokeThickness
         
         OpenButtonMain:SetScale(OpenButtonModule.Scale)
+
+        -- Keep the open button state in sync immediately, including mobile.
+        if not Window.IsOpenButtonEnabled then
+            OpenButtonMain:Visible(false)
+        elseif Window.Closed and not Window.IsPC then
+            OpenButtonMain:Visible(true)
+        end
     end
 
     return OpenButtonMain

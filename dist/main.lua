@@ -29637,8 +29637,8 @@ or ColorSequence.new(Color3.fromHex"40c9ff",Color3.fromHex"e81cff"),
 
 
 
-if ar.Enabled==false then
-af.IsOpenButtonEnabled=false
+if ar.Enabled~=nil then
+af.IsOpenButtonEnabled=ar.Enabled~=false
 end
 
 if ar.OnlyMobile~=false then
@@ -29698,6 +29698,12 @@ an.TextButton.UICorner.CornerRadius=UDim.new(ar.CornerRadius.Scale,ar.CornerRadi
 an.UIStroke.Thickness=ar.StrokeThickness
 
 ag:SetScale(ar.Scale)
+
+if not af.IsOpenButtonEnabled then
+ag:Visible(false)
+elseif af.Closed and not af.IsPC then
+ag:Visible(true)
+end
 end
 
 return ag
@@ -37306,7 +37312,7 @@ Parent=av.Parent,
 Destroyed=false,
 IsFullscreen=false,
 CanResize=av.Resizable~=false,
-IsOpenButtonEnabled=true,
+IsOpenButtonEnabled=not(av.OpenButton==false or(typeof(av.OpenButton)=="table"and av.OpenButton.Enabled==false)),
 
 CurrentConfig=nil,
 ConfigManager=nil,
