@@ -25,7 +25,9 @@ do
 			WindUI = require(cloneref(ReplicatedStorage:WaitForChild("WindUI"):WaitForChild("Init")))
 		else
 			WindUI =
-				loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+				loadstring(game:HttpGet(
+				"https://raw.githubusercontent.com/bytecodev/WindUI/main/dist/main.lua" -- custom fork; includes Tab:EmptyState()
+			))()
 		end
 	end
 end
@@ -99,6 +101,7 @@ local Window = WindUI:CreateWindow({
 	Topbar = {
 		Height = 44,
 		ButtonsType = "Mac", -- Default or Mac
+		TitleInset = 8, -- Mac only: moves title/icon inward from the right edge
 	},
 })
 
@@ -447,6 +450,55 @@ do
 	})
 
 	--OverviewTab:Space()
+end
+
+-- */  Empty State Tab  /* --
+do
+	local EmptyStateTab = ElementsSection:Tab({
+		Title = "Empty State",
+		Icon = "solar:lock-keyhole-minimalistic-bold",
+		IconColor = Grey,
+		IconShape = "Square",
+		Border = true,
+	})
+
+	-- NEW: native centered container for gated/empty tab content.
+	-- Requires this fork's Tab:EmptyState() API (src/components/window/Tab.lua + dist/main.lua).
+	assert(type(EmptyStateTab.EmptyState) == "function", "WindUI build is outdated: Tab:EmptyState() is missing. Update this fork's dist/main.lua.")
+	local EmptyState = EmptyStateTab:EmptyState({
+		MaxWidth = 300, -- maximum width of the centered content
+		Padding = 32, -- horizontal space from the tab edges
+		Gap = 8, -- spacing between EmptyState elements
+	})
+
+	-- EmptyState supports normal WindUI elements such as Button/Paragraph/Input.
+	EmptyState:Button({
+		Title = "Connect first",
+		Icon = "solar:link-square-bold",
+		Justify = "Center",
+		Callback = function()
+			EmptyState:Hide() -- restore the normal tab content
+		end,
+	})
+
+	EmptyStateTab:Paragraph({
+		Title = "Normal tab content",
+		Desc = "This content is hidden while EmptyState is visible.",
+		Image = "solar:check-circle-bold",
+		ImageSize = 22,
+	})
+
+	EmptyStateTab:Button({
+		Title = "Show Empty State",
+		Icon = "solar:lock-keyhole-minimalistic-bold",
+		Justify = "Center",
+		Callback = function()
+			EmptyState:Show() -- hide normal content and show the native state
+		end,
+	})
+
+	-- Show(), Hide(), or SetVisible(boolean) can control the state at runtime.
+	EmptyState:Show() -- start this example in the gated state
 end
 
 -- */  Toggle Tab  /* --

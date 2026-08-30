@@ -778,7 +778,13 @@ return function(Config)
 					AutomaticSize = "X",
 					Size = UDim2.new(0, 0, 1, 0),
 					BackgroundTransparency = 1,
-					Position = UDim2.new(Window.Topbar.ButtonsType == "Mac" and 1 or 0, 0, 0, 0),
+					-- Mac keeps the reversed window config inset from the right edge.
+					Position = UDim2.new(
+						Window.Topbar.ButtonsType == "Mac" and 1 or 0,
+						Window.Topbar.ButtonsType == "Mac" and -(tonumber(Window.Topbar.TitleInset) or 8) or 0,
+						0,
+						0
+					),
 					AnchorPoint = Vector2.new(Window.Topbar.ButtonsType == "Mac" and 1 or 0, 0),
 					Name = "Left",
 				}, {
@@ -879,8 +885,9 @@ return function(Config)
 		if Window.Topbar.ButtonsType == "Mac" then
 			-- Mac layout mirrors the default layout:
 			-- traffic-light buttons on the left, window title/config on the right.
+			local MacTitleInset = tonumber(Window.Topbar.TitleInset) or 8
 			LeftWidth = ButtonsWidth + Window.UIPadding - 4
-			RightWidth = TitleWidth
+			RightWidth = TitleWidth + MacTitleInset
 		else
 			LeftWidth = TitleWidth
 			RightWidth = ButtonsWidth + Window.UIPadding

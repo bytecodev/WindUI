@@ -38152,7 +38152,7 @@ ao("Frame",{
 AutomaticSize="X",
 Size=UDim2.new(0,0,1,0),
 BackgroundTransparency=1,
-Position=UDim2.new(aw.Topbar.ButtonsType=="Mac"and 1 or 0,0,0,0),
+Position=UDim2.new(aw.Topbar.ButtonsType=="Mac"and 1 or 0,aw.Topbar.ButtonsType=="Mac"and-(tonumber(aw.Topbar.TitleInset)or 8)or 0,0,0),
 AnchorPoint=Vector2.new(aw.Topbar.ButtonsType=="Mac"and 1 or 0,0),
 Name="Left",
 },{
@@ -38250,8 +38250,9 @@ local F=A.Right.UIListLayout.AbsoluteContentSize.X/B
 local G
 local H
 if aw.Topbar.ButtonsType=="Mac"then
+local I=tonumber(aw.Topbar.TitleInset)or 8
 G=F+aw.UIPadding-4
-H=C
+H=C+I
 else
 G=C
 H=F+aw.UIPadding
