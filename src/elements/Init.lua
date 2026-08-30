@@ -1,3 +1,14 @@
+local function RemoveFromList(List, Value)
+	for Index = #List, 1, -1 do
+		if List[Index] == Value then
+			table.remove(List, Index)
+			return Index
+		end
+	end
+
+	return nil
+end
+
 return {
 	Elements = {
 		Paragraph = require("./Paragraph"),
@@ -98,18 +109,21 @@ return {
 					function content:Destroy()
 						frame:Destroy()
 
-						table.remove(Window.AllElements, config.GlobalIndex)
-						table.remove(tbl.Elements, config.Index)
-						table.remove(Tab.Elements, config.Index)
-						tbl:UpdateAllElementShapes(tbl)
+						RemoveFromList(Window.AllElements, content)
+						local RemovedIndex = RemoveFromList(tbl.Elements, content)
+
+						if Window.NewElements and RemovedIndex then
+							tbl:UpdateAllElementShapes(tbl)
+						end
 					end
 				end
 
-				Window.AllElements[config.Index] = content
-				tbl.Elements[config.Index] = content
-				if Tab then
-					Tab.Elements[config.Index] = content
-				end
+				-- Each container owns its own Elements array. Nested Group/HStack/VStack/Section
+				-- children must not overwrite the parent Tab.Elements indexes.
+				table.insert(Window.AllElements, content)
+				config.GlobalIndex = #Window.AllElements
+				table.insert(tbl.Elements, content)
+				config.Index = #tbl.Elements
 
 				if Window.NewElements then
 					tbl:UpdateAllElementShapes(tbl)

@@ -25795,12 +25795,12 @@ return nil,1
 end
 
 
-
-
-
-
-local B=#x
-
+local B=0
+for C,F in next,x do
+if type(C)=="number"and C==math.floor(C)and C>B then
+B=C
+end
+end
 
 if B==0 or z<1 or z>B then
 return nil,2
@@ -35706,6 +35706,16 @@ end
 
 return al end function a.af()
 
+local function RemoveFromList(List,Value)
+for Index=#List,1,-1 do
+if List[Index]==Value then
+table.remove(List,Index)
+return Index
+end
+end
+return nil
+end
+
 return{
 Elements={
 Paragraph=a.load'J',
@@ -35806,18 +35816,18 @@ end
 function av.Destroy(ax)
 aw:Destroy()
 
-table.remove(ak.AllElements,at.GlobalIndex)
-table.remove(aa.Elements,at.Index)
-table.remove(ap.Elements,at.Index)
+RemoveFromList(ak.AllElements,av)
+local ay=RemoveFromList(aa.Elements,av)
+if ak.NewElements and ay then
 aa:UpdateAllElementShapes(aa)
 end
 end
-
-ak.AllElements[at.Index]=av
-aa.Elements[at.Index]=av
-if ap then
-ap.Elements[at.Index]=av
 end
+
+table.insert(ak.AllElements,av)
+at.GlobalIndex=#ak.AllElements
+table.insert(aa.Elements,av)
+at.Index=#aa.Elements
 
 if ak.NewElements then
 aa:UpdateAllElementShapes(aa)

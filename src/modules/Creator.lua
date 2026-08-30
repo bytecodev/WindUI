@@ -938,13 +938,14 @@ function Creator:GetElementPosition(elements, targetIndex, isHStack)
 		return nil, 1
 	end
 
-	-- local maxIndex = 0
-	-- for k,_ in next, elements do
-	--     if type(k) == "number" and k > maxIndex then maxIndex = k end
-	-- end
-
-	local maxIndex = #elements
-	--print(maxIndex)
+	-- Do not rely on #elements here. A stale/sparse numeric slot should not make
+	-- the last visible card lose its edge rounding.
+	local maxIndex = 0
+	for k, _ in next, elements do
+		if type(k) == "number" and k == math.floor(k) and k > maxIndex then
+			maxIndex = k
+		end
+	end
 
 	if maxIndex == 0 or targetIndex < 1 or targetIndex > maxIndex then
 		return nil, 2
