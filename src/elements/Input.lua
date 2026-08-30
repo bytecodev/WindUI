@@ -26,6 +26,7 @@ function Element:New(Config)
 		UIElements = {},
 
 		Width = 150,
+		TextareaHeight = Config.TextareaHeight or Config.Height or 100,
 	}
 
 	local CanCallback = true
@@ -62,7 +63,7 @@ function Element:New(Config)
 		InputComponent.Position = UDim2.new(1, 0, Config.Window.NewElements and 0 or 0.5, 0)
 		InputComponent.AnchorPoint = Vector2.new(1, Config.Window.NewElements and 0 or 0.5)
 	else
-		InputComponent.Size = UDim2.new(1, 0, 0, 42 + 56 + 50)
+		InputComponent.Size = UDim2.new(1, 0, 0, Input.TextareaHeight)
 	end
 
 	--[[New("UIScale", {

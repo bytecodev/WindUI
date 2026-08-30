@@ -32336,6 +32336,7 @@ ClearTextOnFocus=ai.ClearTextOnFocus or false,
 UIElements={},
 
 Width=150,
+TextareaHeight=ai.TextareaHeight or ai.Height or 100,
 }
 
 local ak=true
@@ -32372,7 +32373,7 @@ al.Size=UDim2.new(0,aj.Width,0,36)
 al.Position=UDim2.new(1,0,ai.Window.NewElements and 0 or 0.5,0)
 al.AnchorPoint=Vector2.new(1,ai.Window.NewElements and 0 or 0.5)
 else
-al.Size=UDim2.new(1,0,0,148)
+al.Size=UDim2.new(1,0,0,aj.TextareaHeight)
 end
 
 
