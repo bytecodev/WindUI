@@ -327,8 +327,8 @@ end
 local ElementsSection = Window:Section({
 	Title = "Elements",
 	Icon = "solar:widget-5-bold", -- optional section icon
-	--IconColor = Blue, -- optional custom icon color
-	--IconSize = 18, -- optional icon size, default 18
+	--IconColor = Blue, -- optional override; default follows Theme.Placeholder
+	--IconSize = 14, -- optional icon size, default 14
 })
 local ConfigUsageSection = Window:Section({
 	Title = "Config Usage",

@@ -16,7 +16,8 @@ function Section.New(SectionConfig, Parent, Folder, UIScale, Window)
         Opened = SectionConfig.Opened or false,
         
         HeaderSize = 42,
-        IconSize = SectionConfig.IconSize or 18,
+        IconSize = SectionConfig.IconSize or 14,
+        ChevronSize = 18,
         
         Expandable = false,
     }
@@ -42,7 +43,7 @@ function Section.New(SectionConfig, Parent, Folder, UIScale, Window)
     end
     
     local ChevronIconFrame = New("Frame", {
-        Size = UDim2.new(0,SectionModule.IconSize,0,SectionModule.IconSize),
+        Size = UDim2.new(0,SectionModule.ChevronSize,0,SectionModule.ChevronSize),
         BackgroundTransparency = 1,
         Visible = false
     }, {
@@ -75,10 +76,9 @@ function Section.New(SectionConfig, Parent, Folder, UIScale, Window)
                 Text = SectionModule.Title,
                 TextXAlignment = "Left",
                 Size = UDim2.new(
-                    1, 
-                    IconFrame and (-SectionModule.IconSize-10)*2
-                        or (-SectionModule.IconSize-10),
-                        
+                    1,
+                    -(SectionModule.ChevronSize + 10)
+                        - (IconFrame and (SectionModule.IconSize + 10) or 0),
                     1,
                     0
                 ),

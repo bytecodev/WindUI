@@ -24814,7 +24814,7 @@ TooltipText="White",
 TooltipSecondary="Primary",
 TooltipSecondaryText="White",
 
-TabSectionIcon="Icon",
+TabSectionIcon="Placeholder",
 
 SectionIcon="Icon",
 
@@ -36659,7 +36659,8 @@ IconThemed=am.IconThemed,
 Opened=am.Opened or false,
 
 HeaderSize=42,
-IconSize=am.IconSize or 18,
+IconSize=am.IconSize or 14,
+ChevronSize=18,
 
 Expandable=false,
 }
@@ -36685,7 +36686,7 @@ end
 end
 
 local at=ai("Frame",{
-Size=UDim2.new(0,ar.IconSize,0,ar.IconSize),
+Size=UDim2.new(0,ar.ChevronSize,0,ar.ChevronSize),
 BackgroundTransparency=1,
 Visible=false
 },{
@@ -36719,9 +36720,8 @@ Text=ar.Title,
 TextXAlignment="Left",
 Size=UDim2.new(
 1,
-as and(-ar.IconSize-10)*2
-or(-ar.IconSize-10),
-
+-(ar.ChevronSize+10)
+-(as and(ar.IconSize+10)or 0),
 1,
 0
 ),

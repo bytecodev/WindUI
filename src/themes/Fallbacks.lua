@@ -89,7 +89,7 @@ return function(Creator)
 		TooltipSecondary = "Primary",
 		TooltipSecondaryText = "White",
 
-		TabSectionIcon = "Icon",
+		TabSectionIcon = "Placeholder",
 
 		SectionIcon = "Icon",
 
